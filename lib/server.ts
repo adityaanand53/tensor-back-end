@@ -8,6 +8,6 @@ const PORT = 3000;
 //     cert: fs.readFileSync('./config/cert.pem')
 // }
 
-app.listen(PORT, () => {
+app.listen(process.env.PORT || PORT, () => {
     console.log('Express server listening on port ' + PORT);
 })
