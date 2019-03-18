@@ -2,26 +2,23 @@ import * as mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-export const ContactSchema = new Schema({
-    firstName: {
+export const SiteSchema = new Schema({
+    contractorId: {
         type: String,
-        required: 'Enter a first name'
     },
-    lastName: {
+    siteId: {
         type: String,
-        required: 'Enter a first name'
     },
-    email: {
+    location: {
         type: String            
     },
-    company: {
+    matched: {
+        type: Boolean         
+    },
+    imageURL: {
         type: String            
     },
-    phone: {
-        type: Number            
-    },
-    created_date: {
-        type: Date,
-        default: Date.now
+    lat_Long_Contractor: {
+        type: String         
     }
 });
