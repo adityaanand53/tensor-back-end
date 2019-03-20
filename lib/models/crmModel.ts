@@ -20,5 +20,8 @@ export const SiteSchema = new Schema({
     },
     lat_Long_Contractor: {
         type: String         
+    },
+    archived: {
+        type: Boolean
     }
 });

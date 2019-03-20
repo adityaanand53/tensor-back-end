@@ -18,7 +18,7 @@ export class SitesController {
     // }
 
     public getAllSites(req: Request, res: Response) {
-        Sites.find({}, (err, site) => {
+        Sites.find({imageURL : { $exists : true }}, (err, site) => {
             if (err) {
                 res.send(err);
             }
