@@ -13,15 +13,21 @@ export const SiteSchema = new Schema({
         type: String            
     },
     matched: {
-        type: Boolean         
+        type: String         
     },
     imageURL: {
         type: String            
+    },
+    lat_Long_True: {
+        type: String  
     },
     lat_Long_Contractor: {
         type: String         
     },
     archived: {
-        type: Boolean
+        type: String
+    },
+    submittedOn: {
+        type: Date
     }
 });
