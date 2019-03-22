@@ -40,5 +40,12 @@ export class Routes {
         app.route('/createNewSite')
             .post(this.sitesController.createNewSite)
 
+        app.route('/updateSiteData')
+            .put(this.sitesController.updateSiteData)
+
+        app.route('/updateSite')
+            .post(this.sitesController.updateAllSite)
+
+
     }
 }

@@ -56,7 +56,25 @@ export class SitesController {
             res.json(site);
         });
     }
+    public updateSiteData(req: Request, res: Response) {
+        Sites.update({ _id: req.body.id }, { $set: {"lat_Long_True": req.body.latLong, "location": req.body.siteName, "contractorId": req.body.cId}}, (err, site) => {
+            if (err) {
+                res.send(err);
+            }
+            console.log(site);
+            res.json(site);
+        });
+    }
 
+    public updateAllSite(req: Request, res: Response) {
+        Sites.update({ _id: req.body.id }, { $set: {"lat_Long_True": req.body.latLong, "location": req.body.siteName, "contractorId": req.body.cId}}, (err, site) => {
+            if (err) {
+                res.send(err);
+            }
+            console.log(site);
+            res.json(site);
+        });
+    }
     // public getContactWithID (req: Request, res: Response) {           
     //     Sites.findById(req.params.contactId, (err, contact) => {
     //         if(err){
