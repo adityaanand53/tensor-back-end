@@ -29,5 +29,17 @@ export const SiteSchema = new Schema({
     },
     submittedOn: {
         type: Date
+    },
+    address: {
+        type: String
+    },
+    locality: {
+        type: String
+    },
+    city: {
+        type: String
+    },
+    state: {
+        type: String
     }
 });

@@ -1,11 +1,10 @@
-import { Request, Response, NextFunction } from "express";
-import { SitesController } from "../controllers/crmController";
+import { Request, Response } from "express";
+import { SitesController } from "../controllers/siteController";
 import { ContractorController } from "../controllers/contractorController";
 
-export class Routes {
+export class SiteRoutes {
 
     public sitesController: SitesController = new SitesController()
-    public contractorController: ContractorController = new ContractorController()
 
     public routes(app): void {
 
@@ -26,26 +25,18 @@ export class Routes {
             .get(this.sitesController.getArchivedSites)
 
         app.route('/updateArchive')
-            .put(this.sitesController.updateArchive)
-
-        app.route('/contractors')
-            .get(this.contractorController.getContractors)
-
-        app.route('/addContractors')
-            .put(this.contractorController.addContractors)
-
-        app.route('/deleteContractors')
-            .post(this.contractorController.deleteContractors)
+            .post(this.sitesController.updateArchive)
 
         app.route('/createNewSite')
             .post(this.sitesController.createNewSite)
 
         app.route('/updateSiteData')
-            .put(this.sitesController.updateSiteData)
+            .post(this.sitesController.updateSiteData)
 
         app.route('/updateSite')
             .post(this.sitesController.updateAllSite)
 
-
+        app.route('/app/updateSite')
+            .post(this.sitesController.updateSite)
     }
 }

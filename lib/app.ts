@@ -1,19 +1,24 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
-import { Routes } from "./routes/crmRoutes";
 import * as mongoose from "mongoose";
 import * as cors from "cors";
+
+import { SiteRoutes } from "./routes/siteRoutes";
+import { ContractorRoutes } from "./routes/contractorRoutes";
+import { MongoDBConfig } from './constants';
+
 class App {
 
     public app: express.Application = express();
-    public routePrv: Routes = new Routes();
-    // public mongoUrl: string = 'mongodb://localhost/CRMdb';  
-    public mongoUrl: string = 'mongodb://admin:admin123@ds157654.mlab.com:57654/dbravindra';
+    public routeS: SiteRoutes = new SiteRoutes();
+    public routeC: ContractorRoutes = new ContractorRoutes();
+    public mongoUrl: string = `mongodb://${MongoDBConfig.USERID}:${MongoDBConfig.PASSWORD}@ds157654.mlab.com:${MongoDBConfig.PORT}/${MongoDBConfig.DB_NAME}`;
 
     constructor() {
         this.config();
         this.mongoSetup();
-        this.routePrv.routes(this.app);
+        this.routeS.routes(this.app);
+        this.routeC.routes(this.app);
     }
 
     private config(): void {
