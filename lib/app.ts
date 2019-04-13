@@ -7,6 +7,16 @@ import { SiteRoutes } from "./routes/siteRoutes";
 import { ContractorRoutes } from "./routes/contractorRoutes";
 import { MongoDBConfig } from './constants';
 
+
+export const cloudinary = require('cloudinary').v2;
+import { CloudinaryConfig } from './constants'
+
+cloudinary.config({
+    cloud_name: CloudinaryConfig.CLOUD_NAME,
+    api_key: CloudinaryConfig.API_KEY,
+    api_secret: CloudinaryConfig.API_SECRET
+});
+
 class App {
 
     public app: express.Application = express();
@@ -22,9 +32,8 @@ class App {
     }
 
     private config(): void {
-        this.app.use(bodyParser.json());
-        this.app.use(bodyParser.urlencoded({ extended: false }));
-        // serving static files 
+        this.app.use(bodyParser.json({limit: '50mb'}));
+        this.app.use(bodyParser.urlencoded({ extended: false, limit: '50mb', parameterLimit: 100000 }));
         this.app.use(cors())
         this.app.use(express.static('public'));
     }
@@ -37,9 +46,7 @@ class App {
         connection.once('open', () => {
             console.log('MongoDB database connection established successfully!');
         });
-
     }
-
 }
 
 export default new App().app;
