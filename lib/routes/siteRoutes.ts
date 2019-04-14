@@ -60,6 +60,6 @@ export class SiteRoutes {
         app.route('/updateSite')
             .post(this.sitesController.updateAllSite)
 
-        app.post('/app/updateSite', upload.single('image'), this.sitesController.updateSite)
+        app.post('/app/updateSite', upload.array('image', 5), this.sitesController.updateSite)
     }
 }

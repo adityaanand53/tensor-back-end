@@ -2,6 +2,9 @@ import * as mongoose from 'mongoose';
 import { Request, Response } from 'express';
 import * as async from 'async';
 import * as fs from 'fs';
+import * as imagemin from 'imagemin';
+import * as imageminMozjpeg from 'imagemin-mozjpeg';
+const imageminPngquant = require('imagemin-pngquant');
 
 import { SiteSchema } from '../models/siteModel';
 import { cloudinary } from '../app';
@@ -93,26 +96,49 @@ export class SitesController {
     }
 
     public updateSite(req: Request, res: Response) {
-        const imgPath = __dirname.replace("lib\\controllers", "") + 'uploads/' + req.file.filename;
+        const imgPath: string[] = [];
+        for (let i = 0; i < req.files.length; i++) {
+            imgPath.push(__dirname.replace("lib\\controllers", "") + 'uploads/' + req.files[i].filename);
+        }
+       
         async.waterfall([
-            function (callback) {
-                cloudinary.uploader.upload(imgPath, { resource_type: 'image' }).then(function (imgData) {
-                    console.log('** file uploaded to Cloudinary service', imgData);
-                    callback(null, imgData);
+            async function (callback) {
+                const files = await imagemin(imgPath, 'uploads', {
+                    plugins: [
+                        imageminMozjpeg({quality: 50}),
+                        imageminPngquant({quality: [0.5,0.8]})
+                    ]
                 });
-            },
+                const imgData = [];
+                for (let i = 0; i < imgPath.length; i++) {
+                    cloudinary.image(imgPath[i], {width: 385, crop: "scale"});
+                    await cloudinary.uploader.upload(imgPath[i], { resource_type: 'image' }).then(function (img) {
+                        imgData.push(img);
+                    });
+                    if (i === imgPath.length - 1) {
+                        callback(null, imgData);
+                    }
+                }
+            }, 
             function (imgData, callback) {
-                fs.unlink(imgPath, function() {
-                    callback(null, imgData);
+                imgPath.forEach(item => {
+                    fs.unlink(item, function () {
+                        console.log('deleted...............', item);
+                    });
+                })
+                let imgUrl = '';
+                for (let i = 0; i < imgData.length; i++) {
+                    imgUrl += imgData.length === 1 ? imgData[i].url : imgData[i].url + ',';
+                }
+                Sites.update({ siteId: req.body.siteId }, { $set: { "lat_Long_Contractor": req.body.latLong, "imageURL": imgUrl } }, (err, site) => {
+                    if (err) {
+                        res.send(err);
+                    }
+                    res.json(site);
                 });
             }
         ], function (err, imgData) {
-            Sites.update({ siteId: req.body.siteId }, { $set: { "lat_Long_Contractor": req.body.latLong, "imageURL": imgData.url } }, (err, site) => {
-                if (err) {
-                    res.send(err);
-                }
-                res.json(site);
-            });
+            if (err) throw res.send(err);
         });
     }
 }
