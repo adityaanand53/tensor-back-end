@@ -7,20 +7,13 @@ export class ContractorRoutes {
 
     public routes(app): void {
 
-        app.route('/')
-            .get((req: Request, res: Response) => {
-                res.status(200).send({
-                    message: 'GET request successfulll!!!!'
-                })
-            })
-
-        app.route('/contractors')
+        app.route('/api/contractors')
             .get(this.contractorController.getContractors)
 
-        app.route('/addContractors')
+        app.route('/api/addContractors')
             .post(this.contractorController.addContractors)
 
-        app.route('/deleteContractors')
+        app.route('/api/deleteContractors')
             .post(this.contractorController.deleteContractors)
 
      

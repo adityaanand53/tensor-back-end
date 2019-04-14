@@ -1,12 +1,19 @@
-import * as express from "express";
+import { Express, Request, Response, NextFunction } from 'express';
+// const express = require('express');
+import * as express from 'express';
 import * as bodyParser from "body-parser";
 import * as mongoose from "mongoose";
 import * as cors from "cors";
 
+
 import { SiteRoutes } from "./routes/siteRoutes";
 import { ContractorRoutes } from "./routes/contractorRoutes";
+// import { AuthRoutes } from './routes/auth';
 import { MongoDBConfig } from './constants';
 
+var passport  = require('passport');
+
+require('./routes/auth')(passport);
 
 export const cloudinary = require('cloudinary').v2;
 import { CloudinaryConfig } from './constants'
@@ -17,11 +24,16 @@ cloudinary.config({
     api_secret: CloudinaryConfig.API_SECRET
 });
 
-class App {
 
+
+
+
+class App {
+    // public app: Express = express();
     public app: express.Application = express();
     public routeS: SiteRoutes = new SiteRoutes();
     public routeC: ContractorRoutes = new ContractorRoutes();
+    // public routeAuth: AuthRoutes = new AuthRoutes();
     public mongoUrl: string = `mongodb://${MongoDBConfig.USERID}:${MongoDBConfig.PASSWORD}@ds157654.mlab.com:${MongoDBConfig.PORT}/${MongoDBConfig.DB_NAME}`;
 
     constructor() {
@@ -29,13 +41,17 @@ class App {
         this.mongoSetup();
         this.routeS.routes(this.app);
         this.routeC.routes(this.app);
+        // this.routeAuth.routes(this.app);
     }
 
     private config(): void {
-        this.app.use(bodyParser.json({limit: '50mb'}));
+        this.app.use(bodyParser.json({ limit: '50mb' }));
         this.app.use(bodyParser.urlencoded({ extended: false, limit: '50mb', parameterLimit: 100000 }));
         this.app.use(cors())
         this.app.use(express.static('public'));
+        // this.app.use(passport.initialize());
+        // this.app.use(passport.session());
+        this.app.use('/api',passport.authenticate('jwt', { session : false }) );
     }
 
     private mongoSetup(): void {

@@ -9,9 +9,6 @@ export const SiteSchema = new Schema({
     siteId: {
         type: String,
     },
-    location: {
-        type: String            
-    },
     matched: {
         type: String         
     },
