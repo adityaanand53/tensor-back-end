@@ -95,23 +95,27 @@ export class SitesController {
         });
     }
 
-    public updateSite(req: Request, res: Response) {
+    public async updateSite(req: Request, res: Response) {
         const imgPath: string[] = [];
-        for (let i = 0; i < req.files.length; i++) {
-            imgPath.push(__dirname.replace("lib\\controllers", "") + 'uploads/' + req.files[i].filename);
-        }
-       
+        // for (let i = 0; i < req.files.length; i++) {
+        //     imgPath.push(__dirname.replace("lib\\controllers", "") + 'uploads/' + req.files[i].filename);
+        // }
+
+        await fs.writeFile(__dirname.replace("lib\\controllers", "") + "uploads/out.png", req.body.img, 'base64', function (err) {
+            console.log(err);
+        });
+
         async.waterfall([
             async function (callback) {
                 const files = await imagemin(imgPath, 'uploads', {
                     plugins: [
-                        imageminMozjpeg({quality: 50}),
-                        imageminPngquant({quality: [0.5,0.8]})
+                        imageminMozjpeg({ quality: 50 }),
+                        imageminPngquant({ quality: [0.5, 0.8] })
                     ]
                 });
                 const imgData = [];
                 for (let i = 0; i < imgPath.length; i++) {
-                    cloudinary.image(imgPath[i], {width: 385, crop: "scale"});
+                    cloudinary.image(imgPath[i], { width: 385, crop: "scale" });
                     await cloudinary.uploader.upload(imgPath[i], { resource_type: 'image' }).then(function (img) {
                         imgData.push(img);
                     });
@@ -119,7 +123,7 @@ export class SitesController {
                         callback(null, imgData);
                     }
                 }
-            }, 
+            },
             function (imgData, callback) {
                 imgPath.forEach(item => {
                     fs.unlink(item, function () {
@@ -130,7 +134,8 @@ export class SitesController {
                 for (let i = 0; i < imgData.length; i++) {
                     imgUrl += imgData.length === 1 ? imgData[i].url : imgData[i].url + ',';
                 }
-                Sites.update({ siteId: req.body.siteId }, { $set: { "lat_Long_Contractor": req.body.latLong, "imageURL": imgUrl } }, (err, site) => {
+
+                Sites.update({ siteId: req.body.siteId }, { $set: { "lat_Long_Contractor": req.body.lat_Long_True, "imageURL": imgUrl } }, (err, site) => {
                     if (err) {
                         res.send(err);
                     }
