@@ -140,11 +140,12 @@ export class SitesController {
                         if (err) {
                             res.send(err);
                         }
+                        site = Object.assign({}, site, {responseCode: '200'})
                         res.json(site);
                     });
                 }
             ], function (err, imgData) {
-                if (err) throw res.send(err);
+                if (err) res.send(err);
             });
            
         } catch (err) {
