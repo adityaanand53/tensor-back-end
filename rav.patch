@@ -1,0 +1,40 @@
+diff --git a/lib/controllers/siteController.ts b/lib/controllers/siteController.ts
+index c467cf4..3919bd1 100644
+--- a/lib/controllers/siteController.ts
++++ b/lib/controllers/siteController.ts
+@@ -101,15 +101,24 @@ export class SitesController {
+             // for (let i = 0; i < req.files.length; i++) {
+             //     imgPath.push(__dirname.replace("lib\\controllers", "") + 'uploads/' + req.files[i].filename);
+             // }
+-            req.body.img.forEach(async (item, index) => {
++            console.log("fgfhfh", req.body.siteId);
++
++            let imgs = JSON.parse(req.body.img);
++            console.log("fg", JSON.parse(req.body.img).length);
++            console.log("fg", req.body.siteId);
++            console.log("fg", req.body.lat_Long_Contractor);
++            imgs.forEach(async (item, index) => {
++                console.log("1");
+                 imgPath.push(__dirname.replace("lib\\controllers", "") + 'uploads/_' + index +'_out.png');
+-                await fs.writeFile(__dirname.replace("lib\\controllers", "") + "uploads/out.png", item, 'base64', function (err) {
++                await fs.writeFile(__dirname.replace("lib\\controllers", "") + "uploads/_" + index +"_out.png", item, 'base64', function (err) {
+                     console.log(err);
+                 });
+             })
+         
+             async.waterfall([
+                 async function (callback) {
++                console.log("2");
++
+                     const files = await imagemin(imgPath, 'uploads', {
+                         plugins: [
+                             imageminMozjpeg({ quality: 50 }),
+@@ -128,6 +137,8 @@ export class SitesController {
+                     }
+                 },
+                 function (imgData, callback) {
++                console.log("3");
++
+                     imgPath.forEach(item => {
+                         fs.unlink(item, function () {
+                             console.log('deleted...............', item);
