@@ -108,7 +108,6 @@ export class SitesController {
                 });
             })
         
-
             async.waterfall([
                 async function (callback) {
                     const files = await imagemin(imgPath, 'uploads', {
