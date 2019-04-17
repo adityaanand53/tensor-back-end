@@ -101,10 +101,13 @@ export class SitesController {
             // for (let i = 0; i < req.files.length; i++) {
             //     imgPath.push(__dirname.replace("lib\\controllers", "") + 'uploads/' + req.files[i].filename);
             // }
-            imgPath.push(__dirname.replace("lib\\controllers", "") + 'uploads/out.png');
-            await fs.writeFile(__dirname.replace("lib\\controllers", "") + "uploads/out.png", req.body.img, 'base64', function (err) {
-                console.log(err);
-            });
+            req.body.img.forEach(async (item, index) => {
+                imgPath.push(__dirname.replace("lib\\controllers", "") + 'uploads/_' + index +'_out.png');
+                await fs.writeFile(__dirname.replace("lib\\controllers", "") + "uploads/out.png", item, 'base64', function (err) {
+                    console.log(err);
+                });
+            })
+        
 
             async.waterfall([
                 async function (callback) {
