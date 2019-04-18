@@ -57,6 +57,7 @@ class App {
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
         }
+        this.app.use('/api',passport.authenticate('jwt', { session : false }) );
     }
 
     private mongoSetup(): void {
