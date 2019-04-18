@@ -16,9 +16,12 @@ export class SitesController {
             if (err) {
                 res.send(err);
             }
-            if (site.location) {
-                site.address = site.location;
+            for (let i = 0; i < site.length; i++) {
+                if (site[i].location) {
+                    site[i].address = site[i].location;
+                }
             }
+            
             res.json(site);
         });
     }
@@ -28,8 +31,10 @@ export class SitesController {
             if (err) {
                 res.send(err);
             }
-            if (site.location) {
-                site.address = site.location;
+            for (let i = 0; i < site.length; i++) {
+                if (site[i].location) {
+                    site[i].address = site[i].location;
+                }
             }
             res.json(site);
         });
@@ -50,8 +55,10 @@ export class SitesController {
             if (err) {
                 res.send(err);
             }
-            if (site.location) {
-                site.address = site.location;
+            for (let i = 0; i < site.length; i++) {
+                if (site[i].location) {
+                    site[i].address = site[i].location;
+                }
             }
             res.json(site);
         });
