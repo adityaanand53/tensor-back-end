@@ -109,8 +109,8 @@ export class SitesController {
             console.log("fg", req.body.lat_Long_Contractor);
             imgs.forEach(async (item, index) => {
                 console.log("1");
-                imgPath.push(__dirname.replace("lib\\controllers", "") + 'uploads/_' + index +'_out.png');
-                await fs.writeFile(__dirname.replace("lib\\controllers", "") + "uploads/_" + index +"_out.png", item, 'base64', function (err) {
+                imgPath.push('uploads/_' + index +'_out.png');
+                await fs.writeFile("uploads/_" + index +"_out.png", item, 'base64', function (err) {
                     console.log(err);
                 });
             })
