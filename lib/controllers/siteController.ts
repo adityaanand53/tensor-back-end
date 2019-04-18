@@ -95,50 +95,75 @@ export class SitesController {
         });
     }
 
-    public updateSite(req: Request, res: Response) {
-        const imgPath: string[] = [];
-        for (let i = 0; i < req.files.length; i++) {
-            imgPath.push(__dirname.replace("lib\\controllers", "") + 'uploads/' + req.files[i].filename);
+    public async updateSite(req: Request, res: Response) {
+        try {
+            const imgPath: string[] = [];
+            // for (let i = 0; i < req.files.length; i++) {
+            //     imgPath.push(__dirname.replace("lib\\controllers", "") + 'uploads/' + req.files[i].filename);
+            // }
+            console.log("fgfhfh", req.body.siteId);
+
+            let imgs = JSON.parse(req.body.img);
+            console.log("fg", JSON.parse(req.body.img).length);
+            console.log("fg", req.body.siteId);
+            console.log("fg", req.body.lat_Long_Contractor);
+            imgs.forEach(async (item, index) => {
+                console.log("1");
+                imgPath.push('uploads/_' + index +'_out.png');
+                await fs.writeFile("uploads/_" + index +"_out.png", item, 'base64', function (err) {
+                    console.log(err);
+                });
+            })
+        
+            async.waterfall([
+                async function (callback) {
+                console.log("2");
+
+                    const files = await imagemin(imgPath, 'uploads', {
+                        plugins: [
+                            imageminMozjpeg({ quality: 50 }),
+                            imageminPngquant({ quality: [0.5, 0.8] })
+                        ]
+                    });
+                    const imgData = [];
+                    for (let i = 0; i < imgPath.length; i++) {
+                        cloudinary.image(imgPath[i], { width: 385, crop: "scale" });
+                        await cloudinary.uploader.upload(imgPath[i], { resource_type: 'image' }).then(function (img) {
+                            imgData.push(img);
+                        });
+                        if (i === imgPath.length - 1) {
+                            callback(null, imgData);
+                        }
+                    }
+                },
+                function (imgData, callback) {
+                console.log("3");
+
+                    imgPath.forEach(item => {
+                        fs.unlink(item, function () {
+                            console.log('deleted...............', item);
+                        });
+                    })
+                    let imgUrl = '';
+                    for (let i = 0; i < imgData.length; i++) {
+                        imgUrl += imgData.length === 1 ? imgData[i].url : imgData[i].url + ',';
+                    }
+
+                    Sites.update({ siteId: req.body.siteId }, { $set: { "lat_Long_Contractor": req.body.lat_Long_Contractor, "imageURL": imgUrl } }, (err, site) => {
+                        if (err) {
+                            res.send(err);
+                        }
+                        site = Object.assign({}, site, {responseCode: '200'})
+                        res.json(site);
+                    });
+                }
+            ], function (err, imgData) {
+                if (err) res.send(err);
+            });
+           
+        } catch (err) {
+            res.send(err);
         }
        
-        async.waterfall([
-            async function (callback) {
-                const files = await imagemin(imgPath, 'uploads', {
-                    plugins: [
-                        imageminMozjpeg({quality: 50}),
-                        imageminPngquant({quality: [0.5,0.8]})
-                    ]
-                });
-                const imgData = [];
-                for (let i = 0; i < imgPath.length; i++) {
-                    cloudinary.image(imgPath[i], {width: 385, crop: "scale"});
-                    await cloudinary.uploader.upload(imgPath[i], { resource_type: 'image' }).then(function (img) {
-                        imgData.push(img);
-                    });
-                    if (i === imgPath.length - 1) {
-                        callback(null, imgData);
-                    }
-                }
-            }, 
-            function (imgData, callback) {
-                imgPath.forEach(item => {
-                    fs.unlink(item, function () {
-                        console.log('deleted...............', item);
-                    });
-                })
-                let imgUrl = '';
-                for (let i = 0; i < imgData.length; i++) {
-                    imgUrl += imgData.length === 1 ? imgData[i].url : imgData[i].url + ',';
-                }
-                Sites.update({ siteId: req.body.siteId }, { $set: { "lat_Long_Contractor": req.body.latLong, "imageURL": imgUrl } }, (err, site) => {
-                    if (err) {
-                        res.send(err);
-                    }
-                    res.json(site);
-                });
-            }
-        ], function (err, imgData) {
-            if (err) throw res.send(err);
-        });
     }
 }

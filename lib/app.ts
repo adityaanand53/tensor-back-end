@@ -4,6 +4,7 @@ import * as express from 'express';
 import * as bodyParser from "body-parser";
 import * as mongoose from "mongoose";
 import * as cors from "cors";
+import * as fs from 'fs';
 
 
 import { SiteRoutes } from "./routes/siteRoutes";
@@ -17,6 +18,9 @@ require('./routes/auth')(passport);
 
 export const cloudinary = require('cloudinary').v2;
 import { CloudinaryConfig } from './constants'
+
+// var fs = require('fs');
+
 
 cloudinary.config({
     cloud_name: CloudinaryConfig.CLOUD_NAME,
@@ -41,17 +45,29 @@ class App {
         this.mongoSetup();
         this.routeS.routes(this.app);
         this.routeC.routes(this.app);
+<<<<<<< HEAD
         // this.routeAuth.routes(this.app);
+=======
+
+>>>>>>> upload-file-without-auth
     }
 
     private config(): void {
         this.app.use(bodyParser.json({ limit: '50mb' }));
         this.app.use(bodyParser.urlencoded({ extended: false, limit: '50mb', parameterLimit: 100000 }));
-        this.app.use(cors())
+        this.app.use(cors({credentials: true, origin: true}))
         this.app.use(express.static('public'));
+<<<<<<< HEAD
         // this.app.use(passport.initialize());
         // this.app.use(passport.session());
         this.app.use('/api',passport.authenticate('jwt', { session : false }) );
+=======
+
+        var dir = './uploads';
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+        }
+>>>>>>> upload-file-without-auth
     }
 
     private mongoSetup(): void {
