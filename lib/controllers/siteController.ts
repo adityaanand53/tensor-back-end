@@ -16,6 +16,9 @@ export class SitesController {
             if (err) {
                 res.send(err);
             }
+            if (site.location) {
+                site.address = site.location;
+            }
             res.json(site);
         });
     }
@@ -24,6 +27,9 @@ export class SitesController {
         Sites.find({ archived: true }, (err, site) => {
             if (err) {
                 res.send(err);
+            }
+            if (site.location) {
+                site.address = site.location;
             }
             res.json(site);
         });
@@ -43,6 +49,9 @@ export class SitesController {
         Sites.find({ archived: { $eq: "false" } }, (err, site) => {
             if (err) {
                 res.send(err);
+            }
+            if (site.location) {
+                site.address = site.location;
             }
             res.json(site);
         });
