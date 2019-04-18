@@ -41,13 +41,13 @@ export class SiteRoutes {
                 })
             })
 
-        app.route('/api/sites')
+        app.route('/sites')
             .get(this.sitesController.getAllSites)
 
-        app.route('/api/activeSites')
+        app.route('/activeSites')
             .get(this.sitesController.getActiveSites)
 
-        app.route('/api/archivedSites')
+        app.route('/archivedSites')
             .get(this.sitesController.getArchivedSites)
 
         app.route('/api/updateArchive')
@@ -91,6 +91,6 @@ export class SiteRoutes {
         app.route('/api/updateSite')
             .post(this.sitesController.updateAllSite)
 
-        app.post('/api/app/updateSite', upload.array('image', 5), this.sitesController.updateSite)
+        app.post('/app/updateSite', upload.array('image', 5), this.sitesController.updateSite)
     }
 }

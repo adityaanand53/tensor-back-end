@@ -7,7 +7,7 @@ export class ContractorRoutes {
 
     public routes(app): void {
 
-        app.route('/api/contractors')
+        app.route('/contractors')
             .get(this.contractorController.getContractors)
 
         app.route('/api/addContractors')
