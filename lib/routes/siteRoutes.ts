@@ -68,12 +68,8 @@ export class SiteRoutes {
                 }
                 req.login(user, { session : false }, async (error) => {
                   if( error ) return next(error)
-                  //We don't want to store the sensitive information such as the
-                  //user password in the token so we pick only the email and id
                   const body = { _id : user._id, email : user.email };
-                  //Sign the JWT token and populate the payload with the user email and id
                   const token = jwt.sign({ user : body },'top_secret');
-                  //Send back the token to the user
                   return res.json({ token });
                 });     } catch (error) {
                 return next(error);
@@ -88,8 +84,8 @@ export class SiteRoutes {
         app.route('/api/updateSiteData')
             .post(this.sitesController.updateSiteData)
 
-        app.route('/api/updateSite')
-            .post(this.sitesController.updateAllSite)
+        // app.route('/api/updateSite')
+        //     .post(this.sitesController.updateAllSite)
 
         app.post('/app/updateSite', upload.array('image', 5), this.sitesController.updateSite)
     }

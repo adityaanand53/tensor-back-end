@@ -29,14 +29,5 @@ export const SiteSchema = new Schema({
     },
     address: {
         type: String
-    },
-    locality: {
-        type: String
-    },
-    city: {
-        type: String
-    },
-    state: {
-        type: String
     }
 });
