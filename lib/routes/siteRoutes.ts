@@ -34,15 +34,15 @@ export class SiteRoutes {
 
     public routes(app): void {
 
-        app.route('/api/')
+        app.route('/')
             .get((req: Request, res: Response) => {
                 res.status(200).send({
                     message: 'GET request successfulll!!!!'
                 })
             })
 
-        app.route('/sites')
-            .get(this.sitesController.getAllSites)
+        // app.route('/sites')
+        //     .get(this.sitesController.getAllSites)
 
         app.route('/activeSites')
             .get(this.sitesController.getActiveSites)

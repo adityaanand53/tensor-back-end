@@ -21,9 +21,6 @@ export const SiteSchema = new Schema({
     lat_Long_Contractor: {
         type: String         
     },
-    archived: {
-        type: String
-    },
     submittedOn: {
         type: Date
     },
