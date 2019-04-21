@@ -51,23 +51,83 @@ export class SitesController {
             //     }
             //     res.json(site);
             // });
-            Sites.findOne({ _id: idArr }, function (err, result) {
-                if (err) {
-                    res.send(err);
+
+            async.waterfall([
+                function (callback) {
+                    const newArr = [];
+                    idArr.forEach((id, index) => {
+                        let TargetSite = Sites;
+                        let SourceSite = ArchSites;
+                        req.body.archived === 'true' ? SourceSite = Sites : SourceSite = ArchSites;
+                        req.body.archived === 'true' ? TargetSite = ArchSites : TargetSite = Sites;
+                        SourceSite.findOne({ _id: id.trim() }, function (err, result) {
+                            if (err) {
+                                console.log("err", err)
+                                res.send(err);
+                            }
+                            if (result) {
+                                let swap = new (TargetSite)(result)
+                                swap._id = mongoose.Types.ObjectId()
+                                swap.isNew = true
+                                result.remove();
+                                swap.save();
+                                newArr.push(swap);
+                            }
+                            if (index === idArr.length - 1) {
+                                callback(null, newArr)
+                            }
+                        });
+                    });
+                },
+                function (newArr, callback) {
+                    if (newArr.length > 0) {
+                        res.json(newArr);
+                    } else {
+                        res.json({ response: "Err: No site found" });
+                    }
                 }
-                let swap = new (ArchSites)(result)
-                swap._id = mongoose.Types.ObjectId()
-                swap.isNew = true
-                result.remove();
-                swap.save();
-                res.json(swap);
-            })
+            ], function (err, imgData) {
+                if (err) res.send(err);
+            });
         } else {
             res.json({
                 response: "Err: Please provide the Id"
             });
         }
     }
+
+    // public removeArchive(req: Request, res: Response) {
+    //     if (req.body.id) {
+    //         let idArr = req.body.id.split(",");
+    //         const newArr = [];
+    //         idArr.forEach(id => {
+    //             console.log(id.trim());
+
+    //             ArchSites.findOne({ _id: id.trim() }, function (err, result) {
+    //                 if (err) {
+    //                     res.send(err);
+    //                 }
+    //                 if (result) {
+    //                     let swap = new (Sites)(result)
+    //                     swap._id = mongoose.Types.ObjectId()
+    //                     swap.isNew = true
+    //                     result.remove();
+    //                     swap.save();
+    //                     newArr.push(swap);
+    //                 }
+    //             });
+    //         });
+    //         if (newArr.length > 0) {
+    //             res.json(newArr);
+    //         } else {
+    //             res.json({ response: "Err: No site found" });
+    //         }
+    //     } else {
+    //         res.json({
+    //             response: "Err: Please provide the Id"
+    //         });
+    //     }
+    // }
 
     public getActiveSites(req: Request, res: Response) {
         Sites.find({ siteId: { $exists: "true" } }, (err, site) => {
