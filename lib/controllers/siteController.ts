@@ -7,10 +7,12 @@ import * as imageminMozjpeg from 'imagemin-mozjpeg';
 const imageminPngquant = require('imagemin-pngquant');
 
 import { SiteSchema } from '../models/siteModel';
+import { ContractorSchema } from '../models/contractorModel';
 import { cloudinary } from '../app';
 
 const Sites = mongoose.model('Sites', SiteSchema);
 const ArchSites = mongoose.model('ArchivedSites', SiteSchema);
+const Contractor = mongoose.model('Contractor', ContractorSchema);
 
 export class SitesController {
     // public getAllSites(req: Request, res: Response) {
@@ -196,7 +198,37 @@ export class SitesController {
     //         res.json(site);
     //     });
     // }
+    public getSiteData(req: Request, res: Response) {
+        let contractorID = req.query.contractorId;
+        let passcode = req.query.passcode;
 
+        async.waterfall([
+            function (callback) {
+                Contractor.find({ contractorId: { $eq: contractorID } }, (err, contractorData) => {
+                    if (err) {
+                        res.send(err);
+                    }
+                    callback(null, contractorData)
+                });
+            },
+            function (contractorData, callback) {
+                if (contractorData.passcode === passcode) {
+                    Sites.find({ contractorId: { $eq: contractorID } }, (err, site) => {
+                        if (err) {
+                            res.send(err);
+                        }
+                        res.json(site);
+                    });
+                } else {
+                    res.json({ response: "incorrect passcode"});
+                }
+            }
+        ], function (err, imgData) {
+            if (err) res.send(err);
+        });
+
+
+    }
     public async updateSite(req: Request, res: Response) {
         try {
             const imgPath: string[] = [];

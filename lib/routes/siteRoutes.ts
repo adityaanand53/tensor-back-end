@@ -90,5 +90,7 @@ export class SiteRoutes {
         //     .post(this.sitesController.updateAllSite)
 
         app.post('/app/updateSite', upload.array('image', 5), this.sitesController.updateSite)
+
+        app.get('/app/getData', this.sitesController.getSiteData)
     }
 }
