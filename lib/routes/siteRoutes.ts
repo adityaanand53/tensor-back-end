@@ -63,6 +63,9 @@ export class SiteRoutes {
         app.post('/login', async (req, res, next) => {
             passport.authenticate('login', async (err, user, info) => {
                 try {
+                    console.log(err);
+                    console.log(user);
+
                     if (err || !user) {
                         const error = new Error('An Error occured')
                         return next(error);
