@@ -200,11 +200,10 @@ export class SitesController {
     // }
     public getSiteData(req: Request, res: Response) {
         let contractorID = req.query.contractorId;
-        let passcode = req.query.passcode;
-
+        let passcode = Number(req.query.passcode);
         async.waterfall([
             function (callback) {
-                Contractor.find({ contractorId: { $eq: contractorID } }, (err, contractorData) => {
+                Contractor.find({ contractorId: contractorID }, (err, contractorData) => {
                     if (err) {
                         res.send(err);
                     }
@@ -212,15 +211,15 @@ export class SitesController {
                 });
             },
             function (contractorData, callback) {
-                if (contractorData.passcode === passcode) {
-                    Sites.find({ contractorId: { $eq: contractorID } }, (err, site) => {
+                if (Number(contractorData[0].passcode) === passcode) {
+                    Sites.find({ contractorId: { $eq: contractorID }, submittedOn: { $eq: "" } }, (err, site) => {
                         if (err) {
                             res.send(err);
                         }
                         res.json(site);
                     });
                 } else {
-                    res.json({ response: "incorrect passcode"});
+                    res.json({ response: "incorrect passcode" });
                 }
             }
         ], function (err, imgData) {
