@@ -199,8 +199,8 @@ export class SitesController {
     //     });
     // }
     public getSiteData(req: Request, res: Response) {
-        let contractorID = req.query.contractorId;
-        let passcode = Number(req.query.passcode);
+        let contractorID = req.body.contractorId;
+        let passcode = Number(req.body.passcode);
         async.waterfall([
             function (callback) {
                 Contractor.find({ contractorId: contractorID }, (err, contractorData) => {
@@ -272,7 +272,7 @@ export class SitesController {
                         for (let i = 0; i < imgData.length; i++) {
                             imgUrl += imgData.length === 1 ? imgData[i].url : imgData[i].url + ',';
                         }
-                        Sites.update({ siteId: req.body.siteId }, { $set: { "lat_Long_Contractor": req.body.lat_Long_Contractor, "imageURL": imgUrl } }, (err, site) => {
+                        Sites.update({ siteId: req.body.siteId }, { $set: { "lat_Long_Contractor": req.body.lat_Long_Contractor, "imageURL": imgUrl, "submittedOn": req.body.submittedOn } }, (err, site) => {
                             if (err) {
                                 res.send(err);
                             }
