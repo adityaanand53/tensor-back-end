@@ -95,5 +95,7 @@ export class SiteRoutes {
         app.post('/app/updateSite', upload.array('image', 5), this.sitesController.updateSite)
 
         app.post('/app/getData', this.sitesController.getSiteData)
+
+        app.post('/api/setApproved', this.sitesController.setApproved)
     }
 }

@@ -26,5 +26,8 @@ export const SiteSchema = new Schema({
     },
     address: {
         type: String
+    },
+    status: {
+        type: String
     }
 });

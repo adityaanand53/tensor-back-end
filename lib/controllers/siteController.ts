@@ -155,6 +155,7 @@ export class SitesController {
                 lat_Long_True: req.body.lat_Long_True,
                 lat_Long_Contractor: "",
                 submittedOn: "",
+                status: "pending"
             }, (err, site) => {
                 if (err) {
                     res.send(err);
@@ -207,12 +208,15 @@ export class SitesController {
                     if (err) {
                         res.send(err);
                     }
+                    if (!contractorData){
+                        res.send({response: "invalid contractorId"});
+                    }
                     callback(null, contractorData)
                 });
             },
             function (contractorData, callback) {
                 if (Number(contractorData[0].passcode) === passcode) {
-                    Sites.find({ contractorId: { $eq: contractorID }, submittedOn: { $eq: "" } }, (err, site) => {
+                    Sites.find({ contractorId: { $eq: contractorID }, status: { $eq: "pending" } }, (err, site) => {
                         if (err) {
                             res.send(err);
                         }
@@ -235,6 +239,7 @@ export class SitesController {
             //     imgPath.push(__dirname.replace("lib\\controllers", "") + 'uploads/' + req.files[i].filename);
             // }
             let imgs = JSON.parse(req.body.img);
+            const d = new Date();
             if (imgs.length > 0 && req.body.siteId && req.body.lat_Long_Contractor) {
                 imgs.forEach(async (item, index) => {
                     console.log("1");
@@ -272,7 +277,7 @@ export class SitesController {
                         for (let i = 0; i < imgData.length; i++) {
                             imgUrl += imgData.length === 1 ? imgData[i].url : imgData[i].url + ',';
                         }
-                        Sites.update({ siteId: req.body.siteId }, { $set: { "lat_Long_Contractor": req.body.lat_Long_Contractor, "imageURL": imgUrl, "submittedOn": req.body.submittedOn } }, (err, site) => {
+                        Sites.update({ siteId: req.body.siteId }, { $set: { "lat_Long_Contractor": req.body.lat_Long_Contractor, "imageURL": imgUrl, "submittedOn": d.toDateString(), status: "submitted" } }, (err, site) => {
                             if (err) {
                                 res.send(err);
                             }
@@ -292,5 +297,18 @@ export class SitesController {
         } catch (err) {
             res.send(err);
         }
+    }
+
+    public setApproved(req: Request, res: Response) {
+        Sites.update({ _id: req.body.id }, {
+            $set: {
+                "status": req.body.status,
+            }
+        }, (err, site) => {
+            if (err) {
+                res.send(err);
+            }
+            res.json(site);
+        });
     }
 }
