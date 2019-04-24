@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 export const ContractorSchema = new Schema({
 
     contractorId: {
-        type: Number,
+        type: String,
     },
     name: {
         type: String,

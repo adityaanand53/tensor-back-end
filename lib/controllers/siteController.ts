@@ -202,6 +202,8 @@ export class SitesController {
     public getSiteData(req: Request, res: Response) {
         let contractorID = req.body.contractorId;
         let passcode = Number(req.body.passcode);
+        console.log(passcode, contractorID, req.body.contractorId);
+
         async.waterfall([
             function (callback) {
                 Contractor.find({ contractorId: contractorID }, (err, contractorData) => {
@@ -215,6 +217,7 @@ export class SitesController {
                 });
             },
             function (contractorData, callback) {
+                console.log(contractorData);
                 if (Number(contractorData[0].passcode) === passcode) {
                     Sites.find({ contractorId: { $eq: contractorID }, status: { $eq: "pending" } }, (err, site) => {
                         if (err) {
