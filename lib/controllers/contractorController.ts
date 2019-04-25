@@ -21,7 +21,7 @@ export class ContractorController {
     public addContractors = async (req: Request, res: Response) => {
         let passcode: number;
         await this.generatePasscode().then(data => passcode = data);
-        if (req.body.contractorId && req.body.name && passcode) {
+        if (req.body.contractorId && req.body.name && passcode && req.body.contactNum) {
             Contractor.create({ contractorId: req.body.contractorId, name: req.body.name, passcode: passcode, contactNum: req.body.contactNum }, (err, contractorData) => {
                 if (err) {
                     res.send(err);
@@ -30,7 +30,7 @@ export class ContractorController {
                 res.json(contractorData);
             });
         } else {
-            let resp = !req.body.contractorId ? "Err: Contractor Id is required" : !req.body.name ? "Err: Name is required" : "Err: Contact database administrator";
+            let resp = !req.body.contractorId ? "Err: Contractor Id is required" : !req.body.name ? "Err: Name is required" : !req.body.contactNum ? "Err: Contact number is required" : "Err: Contact database administrator";
             res.json({
                 response: resp
             })
