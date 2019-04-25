@@ -305,13 +305,13 @@ export class SitesController {
     public setApproved(req: Request, res: Response) {
         Sites.update({ _id: req.body.id }, {
             $set: {
-                "status": req.body.status,
+                "status": "approved",
             }
         }, (err, site) => {
             if (err) {
                 res.send(err);
             }
-            res.json(site);
+            res.json({response: "success"});
         });
     }
 }
