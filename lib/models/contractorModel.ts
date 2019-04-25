@@ -12,6 +12,9 @@ export const ContractorSchema = new Schema({
     },
     passcode: {
         type: Number
+    },
+    contactNum: {
+        type: Number
     }
 
 });

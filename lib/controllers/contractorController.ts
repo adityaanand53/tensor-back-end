@@ -22,7 +22,7 @@ export class ContractorController {
         let passcode: number;
         await this.generatePasscode().then(data => passcode = data);
         if (req.body.contractorId && req.body.name && passcode) {
-            Contractor.create({ contractorId: req.body.contractorId, name: req.body.name, passcode: passcode }, (err, contractorData) => {
+            Contractor.create({ contractorId: req.body.contractorId, name: req.body.name, passcode: passcode, contactNum: req.body.contactNum }, (err, contractorData) => {
                 if (err) {
                     res.send(err);
                 }

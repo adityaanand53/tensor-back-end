@@ -203,37 +203,40 @@ export class SitesController {
         let contractorID = req.body.contractorId;
         let passcode = Number(req.body.passcode);
         console.log(passcode, contractorID, req.body.contractorId);
-
-        async.waterfall([
-            function (callback) {
-                Contractor.find({ contractorId: contractorID }, (err, contractorData) => {
-                    if (err) {
-                        res.send(err);
-                    }
-                    if (!contractorData){
-                        res.send({response: "invalid contractorId"});
-                    }
-                    callback(null, contractorData)
-                });
-            },
-            function (contractorData, callback) {
-                console.log(contractorData);
-                if (Number(contractorData[0].passcode) === passcode) {
-                    Sites.find({ contractorId: { $eq: contractorID }, status: { $eq: "pending" } }, (err, site) => {
+        if (contractorID && passcode) {
+            async.waterfall([
+                function (callback) {
+                    Contractor.find({ contractorId: contractorID }, (err, contractorData) => {
                         if (err) {
                             res.send(err);
                         }
-                        res.json(site);
+                        if (!contractorData) {
+                            res.send({ response: "invalid contractorId" });
+                        }
+                        callback(null, contractorData)
                     });
-                } else {
-                    res.json({ response: "incorrect passcode" });
+                },
+                function (contractorData, callback) {
+                    console.log(contractorData);
+                    if (Number(contractorData[0].passcode) === passcode) {
+                        Sites.find({ contractorId: { $eq: contractorID }, status: { $eq: "pending" } }, (err, site) => {
+                            if (err) {
+                                res.send(err);
+                            }
+                            res.json(site);
+                        });
+                    } else {
+                        res.json({ response: "incorrect passcode" });
+                    }
                 }
-            }
-        ], function (err, imgData) {
-            if (err) res.send(err);
-        });
-
-
+            ], function (err, imgData) {
+                if (err) res.send(err);
+            });
+        } else {
+            let resp = '';
+            contractorID ? resp = 'Err: invalid passcode' : resp = 'Err: invalid contractor id';
+            res.json({ response: resp });
+        }
     }
     public async updateSite(req: Request, res: Response) {
         try {
@@ -311,7 +314,7 @@ export class SitesController {
             if (err) {
                 res.send(err);
             }
-            res.json({response: "success"});
+            res.json({ response: "success" });
         });
     }
 }
